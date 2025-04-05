@@ -14,7 +14,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ================== Twilio Credentials ==================
 TWILIO_ACCOUNT_SID  = "ACc1478a277b5cec22c01f25fdef4cf41a"
-TWILIO_AUTH_TOKEN  = "966e96abbdae2acc137d0678894bf30a"
+TWILIO_AUTH_TOKEN  = "0bfbdc2db27e179386d9f2d57a12c354"
 TWILIO_PHONE_NUMBER = "+18454078544"
 
 RECIPIENTS = {
@@ -33,7 +33,7 @@ HEADERS = {
 }
 
 # ================== DynamoDB Setup ==================
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
 table = dynamodb.Table('MonitorLogs')
 
 IST = timezone('Asia/Kolkata')
