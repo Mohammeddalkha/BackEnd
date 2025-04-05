@@ -1,7 +1,10 @@
 name: Deploy Lambda Function
 
 on:
-  workflow_dispatch:  # Manual trigger via GitHub Actions UI
+    push:
+      branches:
+        - main
+    workflow_dispatch:  # Manual trigger via GitHub Actions UI
 
 jobs:
   deploy:
