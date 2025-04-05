@@ -13,8 +13,8 @@ from pytz import timezone
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ================== Twilio Credentials ==================
-account_sid = os.environ.get("TWILIO_SID")
-auth_token = os.environ.get("TWILIO_AUTH")
+TWILIO_ACCOUNT_SID  = "ACc1478a277b5cec22c01f25fdef4cf41a"
+TWILIO_AUTH_TOKEN  = "966e96abbdae2acc137d0678894bf30a"
 TWILIO_PHONE_NUMBER = "+18454078544"
 
 RECIPIENTS = {
