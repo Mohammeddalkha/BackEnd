@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Downtime Logs</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 90%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            color: #333;
+        }
+        .btn-container {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #e0e0e0;
+            transition: background 0.3s;
+        }
+        @media (max-width: 768px) {
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Server Downtime Logs</h2>
+    <div class="btn-container">
+        <button onclick="fetchTodayData()">TODAY</button>
+        <button onclick="fetchAllData()">HISTORY</button>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time (IST)</th>
+                    <th>URL Down</th>
+                    <th>Call Initiated</th>
+                    <th>Recipient</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const API_URL = 'http://127.0.0.1:5000/get_status';
+
+async function fetchTodayData() {
+    fetchData('?today=true');
+}
+
+async function fetchAllData() {
+    fetchData('?history=true');
+}
+
+async function fetchData(params) {
+    try {
+        const response = await fetch(API_URL + params, {
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error('Failed to fetch data.');
+
+        const data = await response.json();
+        populateTable(data);
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        alert('Failed to fetch data. Please check your API.');
+    }
+}
+
+function populateTable(data) {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
+
+    if (data.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+        return;
+    }
+
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row.timestamp.replace(' GMT', '')}</td>
+            <td>${row.url}</td>
+            <td>${row.call_initiated}</td>
+            <td>${row.recipient}</td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+
+window.onload = fetchTodayData;
+</script>
+
+</body>
+</html>
