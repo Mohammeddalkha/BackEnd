@@ -18,8 +18,7 @@ TWILIO_AUTH_TOKEN  = "0bfbdc2db27e179386d9f2d57a12c354"
 TWILIO_PHONE_NUMBER = "+18454078544"
 
 RECIPIENTS = {
-    "+918300521700": "DALHA",
-    "+919876543210": "USER2"
+    "+918300521700": "DALHA"
 }
 
 # ================== URLs to Monitor ==================
