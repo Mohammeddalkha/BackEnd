@@ -115,54 +115,55 @@
 </div>
 
 <script>
-const API_URL = 'http://127.0.0.1:5000/get_status';
-
-async function fetchTodayData() {
-    fetchData('?today=true');
-}
-
-async function fetchAllData() {
-    fetchData('?history=true');
-}
-
-async function fetchData(params) {
-    try {
-        const response = await fetch(API_URL + params, {
-            headers: { 'Accept': 'application/json' }
+    const API_URL = 'https://206wgrtbl3.execute-api.ap-south-1.amazonaws.com/dev/get_status';
+    
+    async function fetchTodayData() {
+        fetchData('?today=true');
+    }
+    
+    async function fetchAllData() {
+        fetchData('?history=true');
+    }
+    
+    async function fetchData(params) {
+        try {
+            const response = await fetch(API_URL + params, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) throw new Error('Failed to fetch data.');
+    
+            const data = await response.json();
+            populateTable(data);
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('Failed to fetch data. Please check your API.');
+        }
+    }
+    
+    function populateTable(data) {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+    
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4">No server was down</td></tr>';
+            return;
+        }
+    
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.timestamp.replace(' GMT', '')}</td>
+                <td>${row.url}</td>
+                <td>${row.call_initiated}</td>
+                <td>${row.recipient}</td>
+            `;
+            tableBody.appendChild(tr);
         });
-        if (!response.ok) throw new Error('Failed to fetch data.');
-
-        const data = await response.json();
-        populateTable(data);
-    } catch (error) {
-        console.error('Fetch Error:', error);
-        alert('Failed to fetch data. Please check your API.');
     }
-}
-
-function populateTable(data) {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';
-
-    if (data.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
-        return;
-    }
-
-    data.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${row.timestamp.replace(' GMT', '')}</td>
-            <td>${row.url}</td>
-            <td>${row.call_initiated}</td>
-            <td>${row.recipient}</td>
-        `;
-        tableBody.appendChild(tr);
-    });
-}
-
-window.onload = fetchTodayData;
-</script>
+    
+    window.onload = fetchTodayData;
+    </script>
+    
 
 </body>
 </html>

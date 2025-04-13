@@ -1,11 +1,37 @@
+# === Python ===
 venv/
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
+*.env
 .env
-.DS_Store
-*.log
-package
-venv
 
+# === Serverless ===
+.serverless/
+.zappa/  # (Only needed if using Zappa — safe to keep ignored)
+
+# === Node.js (Not used, but present) ===
+node_modules/
+package.json
+package-lock.json
+
+# === Logs & Build Artifacts ===
+*.log
+*.zip  # e.g., backend.zip from Serverless
+*.egg-info/
+
+# === OS-specific Files ===
+.DS_Store
+Thumbs.db
+
+# === IDE / Editor Config ===
+.vscode/
+.idea/
+
+# === Deployment Files ===
+Procfile  # Only used in Railway/Heroku — ignore if not used
+
+# === Frontend Files (hosted separately) ===
+index.html
+favicon.ico

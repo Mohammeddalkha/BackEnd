@@ -1,48 +1,55 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import mysql.connector
-import subprocess
+import boto3
+from boto3.dynamodb.conditions import Key
+from datetime import datetime
+import pytz
 
 app = Flask(__name__)
-
-# ✅ Allow requests from all origins (Frontend & GitHub Pages)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# ✅ Hardcoded Database Configuration
-DB_CONFIG = {
-    'host': 'ballast.proxy.rlwy.net',
-    'user': 'root',
-    'password': 'RnHgTWEWcuvjvlQHTKSEzYqLGGFtDUSS',
-    'database': 'railway',
-    'port': 32373
-}
+# ✅ DynamoDB setup
+dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+table = dynamodb.Table('MonitorLogs')
 
-def get_db_connection():
-    return mysql.connector.connect(**DB_CONFIG)
+IST = pytz.timezone('Asia/Kolkata')
 
-@app.route('/get_status', methods=['GET'])
+@app.route("/")
+def home():
+    return '✅ Flask API is live on AWS Lambda!'
+
+@app.route("/get_status", methods=["GET"])
 def get_status():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    today_only = request.args.get('today')
 
-    today = request.args.get('today')
+    try:
+        response = table.scan()
+        items = response.get('Items', [])
 
-    query = "SELECT timestamp, url, call_initiated, recipient FROM monitor_log"
+        # Optional: filter today's logs only
+        if today_only:
+            today_str = datetime.now(IST).strftime("%Y-%m-%d")
+            items = [item for item in items if item['timestamp'].startswith(today_str)]
 
-    if today:
-        query += " WHERE DATE(timestamp) = CURDATE()"
+        # Sort by timestamp descending
+        items.sort(key=lambda x: x['timestamp'], reverse=True)
 
-    query += " ORDER BY timestamp DESC"
+        # Return specific fields only
+        filtered_data = [
+            {
+                "timestamp": item["timestamp"],
+                "url": item["url"],
+                "call_initiated": item["call_initiated"],
+                "recipient": item["recipient"]
+            } for item in items
+        ]
 
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
+        response = jsonify(filtered_data)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
 
-    response = jsonify(data)
-    response.headers.add("Access-Control-Allow-Origin", "*")  # ✅ Fixes CORS issue
-    return response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-        # ✅ Start Flask API
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
