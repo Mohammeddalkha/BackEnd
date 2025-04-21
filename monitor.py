@@ -14,7 +14,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ================== Twilio Credentials ==================
 TWILIO_ACCOUNT_SID  = "ACc1478a277b5cec22c01f25fdef4cf41a"
-TWILIO_AUTH_TOKEN  = "0bfbdc2db27e179386d9f2d57a12c354"
+TWILIO_AUTH_TOKEN  = "1e2f067a549fab2e49a37b42a43dcbfc"
 TWILIO_PHONE_NUMBER = "+918300521700"
 
 RECIPIENTS = {
