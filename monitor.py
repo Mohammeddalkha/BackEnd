@@ -23,8 +23,7 @@ RECIPIENTS = {
 
 # ================== URLs to Monitor ==================
 URLS_TO_MONITOR = [
-    'https://fcrm.myfundbox.com',
-    'https://httpstat.us/502'
+    'https://fcrm.myfundbox.com'
 ]
 
 HEADERS = {
