@@ -18,7 +18,7 @@ IST = pytz.timezone('Asia/Kolkata')
 def home():
     return '✅ Flask API is live on AWS Lambda!'
 
-@app.route("/get_status", methods=["GET"])
+@app.route("/", methods=["GET"])
 def get_status():
     today_only = request.args.get('today')
 
